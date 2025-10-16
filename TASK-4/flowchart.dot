@@ -1,0 +1,123 @@
+digraph DersKayitSistemi {
+    rankdir=TB;
+    node [shape=box, style=rounded, fontname="Arial"];
+
+    start [label="Başlangıç", shape=oval];
+    ogrenci_no_giris [label="Öğrenci No ve Şifre Gir"];
+    giris_kontrol [label="Giriş Başarılı mı?", shape=diamond];
+    cikis_giris_fail [label="Giriş Başarısız\nÇıkış", shape=oval];
+
+    ders_listesi [label="Ders Listesini Göster"];
+
+    ders_secim_loop [label="Ders Seçim Döngüsü Başlat"];
+
+    ders_kodu_gir [label="Ders Kodu Gir (-1:Çıkış)"];
+
+    ders_kodu_sorgu [label="Ders Bilgisi Al"];
+
+    kontenjan_kontrol [label="Kontenjan Var mı?", shape=diamond];
+    kontenjan_yok [label="Kontenjan Dolmuş", shape=box];
+
+    onkosul_kontrol [label="Ön Koşul Sağlanıyor mu?", shape=diamond];
+    onkosul_yok [label="Ön Koşul Sağlanmadı", shape=box];
+
+    zaman_cakis_kontrol [label="Zaman Çakışması Var mı?", shape=diamond];
+    zaman_cakis_var [label="Zaman Çakışması Var", shape=box];
+
+    kredi_limit_kontrol [label="Kredi Limiti Aşılır mı?", shape=diamond];
+    kredi_limit_asildi [label="Kredi Limiti Aşıldı", shape=box];
+
+    ders_ekle [label="Dersi Seçilenlere Ekle\nToplam Krediyi Güncelle"];
+
+    ders_secim_loop_end [label="Yeni Ders Seçmek İster mi?", shape=diamond];
+
+    ders_cikarma_loop [label="Ders Çıkarma Döngüsü Başlat"];
+    cikarma_soru [label="Ders Çıkarmak İster misiniz?", shape=diamond];
+
+    ders_kodu_cikar [label="Çıkarmak İstenen Ders Kodu Gir"];
+
+    ders_var_mi [label="Ders Seçilenlerde Var mı?", shape=diamond];
+    ders_cikar [label="Dersi Çıkar\nToplam Krediyi Güncelle"];
+    ders_yok [label="Seçilmemiş Ders", shape=box];
+
+    gpa_al [label="GPA Al"];
+    gpa_kontrol [label="GPA < 2.5 ?", shape=diamond];
+    danisman_onay_kontrol [label="Danışman Onayı Var mı?", shape=diamond];
+    danisman_onay_yok [label="Danışman Onayı Yok\nKayıt İptal", shape=oval];
+
+    kayit_ozeti [label="Kayıt Özeti Göster"];
+    kayit_onay [label="Kaydı Onaylıyor musunuz?", shape=diamond];
+
+    kayit_tamam [label="Kayıt Tamamlandı", shape=oval];
+    kayit_iptal [label="Kayıt İptal Edildi", shape=oval];
+
+    // Akış
+
+    start -> ogrenci_no_giris;
+    ogrenci_no_giris -> giris_kontrol;
+    giris_kontrol -> ders_listesi [label="Evet"];
+    giris_kontrol -> cikis_giris_fail [label="Hayır"];
+
+    ders_listesi -> ders_secim_loop;
+    ders_secim_loop -> ders_kodu_gir;
+    ders_kodu_gir -> ders_kodu_sorgu;
+
+    ders_kodu_sorgu -> kontenjan_kontrol;
+    kontenjan_kontrol -> kontenjan_yok [label="Hayır"];
+    kontenjan_kontrol -> onkosul_kontrol [label="Evet"];
+
+    kontenjan_yok -> ders_secim_loop;
+
+    onkosul_kontrol -> onkosul_yok [label="Hayır"];
+    onkosul_kontrol -> zaman_cakis_kontrol [label="Evet"];
+
+    onkosul_yok -> ders_secim_loop;
+
+    zaman_cakis_kontrol -> zaman_cakis_var [label="Evet"];
+    zaman_cakis_kontrol -> kredi_limit_kontrol [label="Hayır"];
+
+    zaman_cakis_var -> ders_secim_loop;
+
+    kredi_limit_kontrol -> kredi_limit_asildi [label="Evet"];
+    kredi_limit_kontrol -> ders_ekle [label="Hayır"];
+
+    kredi_limit_asildi -> ders_secim_loop;
+
+    ders_ekle -> ders_secim_loop_end;
+
+    ders_secim_loop_end -> ders_secim_loop [label="Evet"];
+    ders_secim_loop_end -> ders_cikarma_loop [label="Hayır"];
+
+    // Ders çıkarma döngüsü
+
+    ders_cikarma_loop -> cikarma_soru;
+    cikarma_soru -> ders_cikarma_loop [label="Evet"];
+    cikarma_soru -> gpa_al [label="Hayır"];
+
+    ders_cikarma_loop -> cikarma_soru;
+
+    cikarma_soru -> ders_kodu_cikar [label="Evet"];
+    ders_kodu_cikar -> ders_var_mi;
+
+    ders_var_mi -> ders_cikar [label="Evet"];
+    ders_var_mi -> ders_yok [label="Hayır"];
+
+    ders_cikar -> ders_cikarma_loop;
+    ders_yok -> ders_cikarma_loop;
+
+    // GPA ve onay kontrolü
+
+    gpa_al -> gpa_kontrol;
+    gpa_kontrol -> danisman_onay_kontrol [label="Evet"];
+    gpa_kontrol -> kayit_ozeti [label="Hayır"];
+
+    danisman_onay_kontrol -> danisman_onay_yok [label="Hayır"];
+    danisman_onay_kontrol -> kayit_ozeti [label="Evet"];
+
+    danisman_onay_yok -> kayit_iptal;
+
+    kayit_ozeti -> kayit_onay;
+
+    kayit_onay -> kayit_tamam [label="Evet"];
+    kayit_onay -> kayit_iptal [label="Hayır"];
+}
