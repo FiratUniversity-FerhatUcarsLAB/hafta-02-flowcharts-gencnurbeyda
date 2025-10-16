@@ -1,0 +1,107 @@
+digraph ATM {
+  rankdir=TB;
+  node [fontname="Helvetica"];
+  // şekil ayarları
+  start [label="Başla", shape=oval];
+  wait_card [label="Kart takılmasını bekle", shape=box];
+  card_inserted? [label="Kart takıldı mı?", shape=diamond];
+  check_blocked [label="Kart bloke mi?", shape=diamond];
+  display_blocked [label="Kartınız bloke edilmiştir\n(lütfen banka ile iletişime geçin)", shape=box];
+  eject_retain [label="Kart iade/retention\n(EJECT/RETAIN_CARD)", shape=box];
+
+  // PIN döngüsü
+  pin_init [label="pinAttempts <- 0\nauthenticated <- FALSE", shape=box];
+  enter_pin [label="PIN gir", shape=parallelogram];
+  pin_correct? [label="PIN doğru mu?", shape=diamond];
+  inc_attempt [label="pinAttempts <- pinAttempts + 1\nGöster: Hatalı PIN", shape=box];
+  attempts_exceeded? [label="pinAttempts >= 3 ?", shape=diamond];
+  block_card [label="Kartı bloke et\n(RETAIN_CARD veya bildirim)", shape=box];
+
+  // İşlem döngüsü
+  transactions_start [label="İşlem döngüsüne gir\n(continueTransactions <- TRUE)", shape=box];
+  show_menu [label="Menü:\n1) Bakiye Sorgula\n2) Para Çek\n3) Kart İade/Çıkış", shape=box];
+  choice [label="Seçim (1/2/3)?", shape=diamond];
+
+  // Bakiye
+  show_balance [label="Bakiye göster\n(Mevcut bakiye ve günlük çekim)", shape=box];
+  ask_another_after_balance [label="Başka işlem ister misiniz? (E/H)?", shape=diamond];
+
+  // Çekme işlemi
+  withdraw_start [label="Çekilecek tutarı gir", shape=parallelogram];
+  cancel? [label="İptal mi / 0 mı?", shape=diamond];
+  check_multiple_20 [label="Tutar 20 TL'nin katı mı?", shape=diamond];
+  insufficient_balance [label="Yetersiz bakiye - hata göster", shape=box];
+  check_daily_limit [label="Günlük limit aşılıyor mu?", shape=diamond];
+  display_limit_error [label="Günlük limit aşılıyor - hata göster", shape=box];
+  dispense_cash [label="Para ver (DISPENSE_CASH)\nFiş yazdır (PRINT_RECEIPT)\nGünlük/hesap güncelle", shape=box];
+  ask_another_after_withdraw [label="Başka işlem ister misiniz? (E/H)?", shape=diamond];
+
+  // Exit
+  eject_card [label="Kartı iade et (EJECT_CARD)\nLütfen kartınızı alın", shape=box];
+  end [label="Bitiş", shape=oval];
+
+  // Kenarlar (flow)
+  start -> wait_card;
+  wait_card -> card_inserted?;
+
+  card_inserted? -> check_blocked [label="Evet"];
+  card_inserted? -> wait_card [label="Hayır", style=dashed];
+
+  check_blocked -> display_blocked [label="Evet"];
+  display_blocked -> eject_retain -> wait_card;
+
+  check_blocked -> pin_init [label="Hayır"];
+
+  // PIN döngüsü akışı
+  pin_init -> enter_pin;
+  enter_pin -> pin_correct?;
+  pin_correct? -> transactions_start [label="Evet"];
+  pin_correct? -> inc_attempt [label="Hayır"];
+  inc_attempt -> attempts_exceeded?;
+  attempts_exceeded? -> block_card [label="Evet"];
+  block_card -> eject_retain -> wait_card;
+  attempts_exceeded? -> enter_pin [label="Hayır"];
+
+  // İşlem döngüsü
+  transactions_start -> show_menu -> choice;
+
+  // Balance branch
+  choice -> show_balance [label="1"];
+  show_balance -> ask_another_after_balance;
+  ask_another_after_balance -> show_menu [label="Evet"];
+  ask_another_after_balance -> eject_card [label="Hayır"];
+
+  // Withdraw branch
+  choice -> withdraw_start [label="2"];
+  withdraw_start -> cancel?;
+  cancel? -> show_menu [label="Evet (iptal)"];
+  cancel? -> ask_another_after_withdraw [label="Hayır (iptal sonrası soru)"]; 
+
+  // If not canceled, continue checks
+  cancel? -> check_multiple_20 [label="Hayır, devam"];
+  check_multiple_20 -> show_menu [label="Hayır (20'nin katı değil)"];
+  check_multiple_20 -> check_balance [label="Evet"];
+  
+  // Balance check node (inline)
+  check_balance [label="Tutar <= accountBalance ?", shape=diamond];
+  check_balance -> insufficient_balance [label="Hayır"];
+  insufficient_balance -> show_menu;
+  check_balance -> check_daily_limit [label="Evet"];
+
+  check_daily_limit -> display_limit_error [label="Evet"];
+  display_limit_error -> show_menu;
+  check_daily_limit -> dispense_cash [label="Hayır"];
+
+  dispense_cash -> ask_another_after_withdraw;
+  ask_another_after_withdraw -> show_menu [label="Evet"];
+  ask_another_after_withdraw -> eject_card [label="Hayır"];
+
+  // Exit branch
+  choice -> eject_card [label="3"];
+
+  // Son
+  eject_card -> wait_card;
+
+  // Görsel düzenlemeler (opsiyonel)
+  { rank = same; choice; show_menu; }
+}
