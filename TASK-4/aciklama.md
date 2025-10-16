@@ -1,3 +1,2 @@
 
-
-sistemin kısa açıklaması (maks. 5-6 satır)
+Öğrenci ders kayıt sistemi, öğrenci numarası ve şifre ile güvenli giriş yapılmasıyla başlar. Öğrenci mevcut ders listesini görüntüler ve istediği dersleri seçer. Her ders için kontenjan, ön koşul, zaman çakışması ve toplam kredi limiti kontrolleri yapılır. GPA’si 2.5’in altındaki öğrenciler için danışman onayı zorunludur. Tüm ders seçimleri tamamlandıktan sonra kayıt özeti gösterilir ve öğrenci onay verirse kayıt işlemi tamamlanır.
