@@ -1,0 +1,24 @@
+Hastanede randevu alma ve tahlil sonu¸clarına eri¸sim sistemini modelleyin.
+Sistem Gereksinimleri:
+Hasta kimlik do˘grulama (TC No)
+˙
+I¸slem se¸cimi: 1-Randevu Al, 2-Tahlil Sonucu G¨or (ko¸sul)
+Randevu mod¨ul¨u: Poliklinik se¸cimi, doktor listesi, uygun saatler
+(d¨ong¨u)
+Randevu onayı ve SMS g¨onderimi
+Tahlil mod¨ul¨u: Tahlil var mı kontrol¨u (ko¸sul)
+Sonu¸c hazır mı kontrol¨u (ko¸sul)
+Sonu¸c g¨or¨unt¨uleme veya bekleme mesajı
+Sonu¸cları PDF indir se¸cene˘gi
+Ba¸ska i¸slem yapmak ister misiniz? (d¨ong¨u) Hastane randevu sistemi i¸cin algoritma: kimlik do˘grulama, poliklinik
+se¸cimi, doktor listesi g¨or¨unt¨uleme, uygun saatleri g¨osterme, randevu
+onaylama ve SMS g¨onderme. Pseudocode yaz.”
+Mod¨ul 2: Tahlil Sonu¸cları
+“Tahlil sonucu g¨or¨unt¨uleme sistemi: kimlik do˘grulama, tahlil varlı˘gı
+kontrol¨u, sonu¸c hazır mı kontrol¨u, g¨or¨unt¨uleme veya bekleme mesajı, PDF
+indirme. Pseudocode yaz.”
+
+Şunu dedin:
+dot yaz
+Şunu dedin:
+5 cümlelik açıklama yaz
