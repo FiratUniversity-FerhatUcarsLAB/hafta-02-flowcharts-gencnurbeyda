@@ -1,0 +1,73 @@
+digraph RandevuSistemi {
+    rankdir=TB;
+    node [shape=box, style=rounded];
+
+    start [label="Başlangıç", shape=oval];
+    tc_giris [label="TC Kimlik No Gir"];
+    tc_kontrol [label="TC Geçerli mi?", shape=diamond];
+    gecersiz_tc [label="Geçersiz TC - Çıkış", shape=oval];
+
+    islem_sec [label="İşlem Seç: 1-Randevu 2-Tahlil 3-Çıkış", shape=diamond];
+
+    // Randevu
+    poliklinik_sec [label="Poliklinik Seç"];
+    doktor_sec [label="Doktor Seç"];
+    saat_dongu [label="Uygun Saat Seçimi", shape=diamond];
+    saat_uygun [label="Saat Uygun mu?", shape=diamond];
+    onay [label="Randevu Onayı", shape=diamond];
+    randevu_kaydet [label="Randevu Kaydedildi\nSMS Gönderildi", shape=oval];
+    saat_tekrar [label="Saat Uygun Değil\nTekrar Dene"];
+    randevu_iptal [label="Randevu İptal", shape=oval];
+
+    // Tahlil modülüne geçiş
+    tahlil_modul [label="Tahlil Modülüne Git", style=filled, fillcolor=lightgray];
+
+    // Çıkış
+    cikis [label="Çıkış", shape=oval];
+
+    // Akışlar
+    start -> tc_giris;
+    tc_giris -> tc_kontrol;
+    tc_kontrol -> gecersiz_tc [label="Hayır"];
+    tc_kontrol -> islem_sec [label="Evet"];
+
+    islem_sec -> poliklinik_sec [label="1"];
+    islem_sec -> tahlil_modul [label="2"];
+    islem_sec -> cikis [label="3"];
+
+    poliklinik_sec -> doktor_sec;
+    doktor_sec -> saat_dongu;
+    saat_dongu -> saat_uygun;
+    saat_uygun -> onay [label="Evet"];
+    saat_uygun -> saat_tekrar [label="Hayır"];
+    saat_tekrar -> saat_dongu;
+
+    onay -> randevu_kaydet [label="Evet"];
+    onay -> randevu_iptal [label="Hayır"];
+}
+digraph TahlilSonuc {
+    rankdir=TB;
+    node [shape=box, style=rounded];
+
+    start [label="Tahlil Modülü Başlangıç", shape=oval];
+    tahlil_var [label="Tahlil Kaydı Var mı?", shape=diamond];
+    tahlil_yok [label="Tahlil Yok - Çıkış", shape=oval];
+
+    sonuc_hazir [label="Sonuç Hazır mı?", shape=diamond];
+    sonuc_bekle [label="Sonuç Hazır Değil\nBekleyiniz", shape=oval];
+    sonuc_goster [label="Sonuçları Göster"];
+    pdf_sor [label="PDF İndirilsin mi?", shape=diamond];
+    pdf_indir [label="PDF İndirildi", shape=oval];
+    bitti [label="İşlem Tamamlandı", shape=oval];
+
+    // Akışlar
+    start -> tahlil_var;
+    tahlil_var -> tahlil_yok [label="Hayır"];
+    tahlil_var -> sonuc_hazir [label="Evet"];
+    sonuc_hazir -> sonuc_bekle [label="Hayır"];
+    sonuc_hazir -> sonuc_goster [label="Evet"];
+    sonuc_goster -> pdf_sor;
+    pdf_sor -> pdf_indir [label="Evet"];
+    pdf_sor -> bitti [label="Hayır"];
+    pdf_indir -> bitti;
+}
