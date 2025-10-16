@@ -1,0 +1,63 @@
+digraph ECommerce {
+
+    rankdir=TB;
+    node [shape=box, style=rounded];
+
+    start [label="Başlangıç", shape=oval];
+    login [label="Kullanıcı Girişi"];
+    login_check [label="Giriş Başarılı mı?", shape=diamond];
+    login_fail [label="Hatalı Giriş - Çıkış", shape=oval];
+    kategori_sec [label="Kategori Seç"];
+    urun_goster [label="Ürünleri Göster"];
+    urun_sec [label="Ürün Seç"];
+    stok_kontrol [label="Stok Var mı?", shape=diamond];
+    stok_yok [label="Stok Yok - Ürün Seçilmedi"];
+    adet_gir [label="Adet Gir"];
+    sepete_ekle [label="Sepete Ekle"];
+    devam_mi [label="Devam Etmek İstiyor Musun?", shape=diamond];
+    sepet_goster [label="Sepeti Görüntüle / Düzenle"];
+    indirim_sor [label="İndirim Kodu Var mı?", shape=diamond];
+    indirim_gir [label="İndirim Kodu Gir"];
+    indirim_gecersiz [label="Geçersiz Kod"];
+    min_kontrol [label="Tutar >= 50 TL?", shape=diamond];
+    min_yetersiz [label="Tutar Yetersiz - Çıkış", shape=oval];
+    kargo_kontrol [label="Tutar >= 200 TL?", shape=diamond];
+    kargo_ucretsiz [label="Kargo Ücretsiz"];
+    kargo_ekle [label="Kargo: 20 TL"];
+    odeme_sec [label="Ödeme Yöntemi Seç"];
+    odeme_gecersiz [label="Geçersiz Ödeme - Çıkış", shape=oval];
+    onay_sor [label="Siparişi Onayla?", shape=diamond];
+    siparis_ver [label="Sipariş Başarılı", shape=oval];
+    siparis_iptal [label="Sipariş İptal", shape=oval];
+
+    // Akışlar
+    start -> login;
+    login -> login_check;
+    login_check -> login_fail [label="Hayır"];
+    login_check -> kategori_sec [label="Evet"];
+    kategori_sec -> urun_goster;
+    urun_goster -> urun_sec;
+    urun_sec -> stok_kontrol;
+    stok_kontrol -> stok_yok [label="Hayır"];
+    stok_kontrol -> adet_gir [label="Evet"];
+    adet_gir -> sepete_ekle;
+    sepete_ekle -> devam_mi;
+    devam_mi -> kategori_sec [label="Evet"];
+    devam_mi -> sepet_goster [label="Hayır"];
+    stok_yok -> kategori_sec;
+
+    sepet_goster -> indirim_sor;
+    indirim_sor -> indirim_gir [label="Evet"];
+    indirim_sor -> min_kontrol [label="Hayır"];
+    indirim_gir -> min_kontrol;
+    min_kontrol -> min_yetersiz [label="Hayır"];
+    min_kontrol -> kargo_kontrol [label="Evet"];
+    kargo_kontrol -> kargo_ucretsiz [label="Evet"];
+    kargo_kontrol -> kargo_ekle [label="Hayır"];
+    kargo_ucretsiz -> odeme_sec;
+    kargo_ekle -> odeme_sec;
+    odeme_sec -> odeme_gecersiz [label="Geçersiz"];
+    odeme_sec -> onay_sor [label="Geçerli"];
+    onay_sor -> siparis_ver [label="Evet"];
+    onay_sor -> siparis_iptal [label="Hayır"];
+}
