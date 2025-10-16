@@ -1,3 +1,1 @@
-
-
-sistemin kısa açıklaması (maks. 5-6 satır)
+Hastane bilgi sistemi, TC kimlik numarasıyla kimlik doğrulaması yaparak başlar. Kullanıcı, randevu almak veya tahlil sonucu görüntülemek arasında seçim yapar. Randevu modülünde poliklinik ve doktor seçilir, uygun saat belirlenir ve onay sonrası SMS gönderilir. Tahlil modülünde sonuçların varlığı ve hazır olup olmadığı kontrol edilir; sonuçlar varsa görüntülenir ve istenirse PDF olarak indirilir. Her işlemin sonunda kullanıcı yeni bir işlem yapmak isteyip istemediğini seçebilir.
