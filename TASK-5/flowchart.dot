@@ -1,0 +1,63 @@
+digraph AkilliEvGuvenlikSistemi {
+    rankdir=TB;
+    node [shape=box, style=rounded, fontname="Arial"];
+
+    start [label="Başlangıç", shape=oval];
+    sistem_aktif_mi [label="Sistem Aktif mi?", shape=diamond];
+    sensör_oku [label="Sensörleri Oku\n(Hareket, Kapı/Pencere)"];
+    hareket_var [label="Hareket Algılandı mı?", shape=diamond];
+    kapi_pencere_acik [label="Kapı/Pencere Açık mı?", shape=diamond];
+    tehdit_var [label="Tehdit Var mı?", shape=diamond, style=bold];
+
+    kamera_aktif_mi [label="Kamera Aktif mi?", shape=diamond];
+    kamera_aktive_et [label="Kamerayı Aktive Et"];
+
+    ev_sahibi_evde_mi [label="Ev Sahibi Evde mi?", shape=diamond];
+    alarm_seviyesi_belirle [label="Alarm Seviyesi Belirle\n(1=Düşük,2=Orta,3=Yüksek)"];
+
+    bildirim_gonder [label="Bildirim Gönder\n(SMS, App, Email)"];
+
+    alarm_sifirlandi_mi [label="Alarm Sıfırlandı mı?", shape=diamond];
+    alarm_devam [label="Alarm Devam Ediyor\n(Gerekirse Alarm Sesi Çal)"];
+
+    bekle [label="Bekle 5 saniye"];
+
+    loop_start [label="Sürekli Döngü", shape=oval];
+
+    // Akış
+    start -> loop_start;
+    loop_start -> sistem_aktif_mi;
+
+    sistem_aktif_mi -> sensör_oku [label="Evet"];
+    sistem_aktif_mi -> loop_start [label="Hayır"];
+
+    sensör_oku -> hareket_var;
+    hareket_var -> tehdit_var [label="Evet"];
+    hareket_var -> kapi_pencere_acik [label="Hayır"];
+
+    kapi_pencere_acik -> tehdit_var [label="Evet"];
+    kapi_pencere_acik -> loop_start [label="Hayır"];
+
+    tehdit_var -> kamera_aktif_mi [label="Evet"];
+    tehdit_var -> loop_start [label="Hayır"];
+
+    kamera_aktif_mi -> kamera_aktive_et [label="Evet"];
+    kamera_aktif_mi -> ev_sahibi_evde_mi [label="Hayır"];
+
+    kamera_aktive_et -> ev_sahibi_evde_mi;
+
+    ev_sahibi_evde_mi -> alarm_seviyesi_belirle [label="Hayır"];
+    ev_sahibi_evde_mi -> alarm_seviyesi_belirle [label="Evet"];
+
+    alarm_seviyesi_belirle -> bildirim_gonder;
+
+    bildirim_gonder -> alarm_sifirlandi_mi;
+
+    alarm_sifirlandi_mi -> loop_start [label="Evet"];
+    alarm_sifirlandi_mi -> alarm_devam [label="Hayır"];
+
+    alarm_devam -> loop_start;
+
+    loop_start -> bekle;
+    bekle -> loop_start;
+}
